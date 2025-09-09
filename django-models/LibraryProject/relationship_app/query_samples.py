@@ -35,13 +35,14 @@ def get_all_books_in_library(library_name):
         print(f"\nLibrary '{library_name}' not found.")
 
 # --- Query 3: Retrieve the librarian for a library ---
+
 def get_librarian_for_library(library_name):
     """
     Retrieves and prints the librarian for a specific library.
     """
     try:
         # Find the librarian whose library field matches the given library name
-        librarian = Librarian.objects.get(library__name=library_name)
+        librarian = Librarian.objects.get(library=library_name)
         
         print(f"\n--- Librarian for {librarian.library.name} Library ---")
         print(f"Name: {librarian.name}")
