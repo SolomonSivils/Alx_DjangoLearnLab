@@ -36,16 +36,16 @@ def get_all_books_in_library(library_name):
 
 # --- Query 3: Retrieve the librarian for a library ---
 def get_librarian_for_library(library_name):
-   
+    """
+    Retrieves and prints the librarian for a specific library.
+    """
     try:
-        library = Library.objects.get(name=library_name)
-        # Access the related librarian through the reverse relationship
-        librarian = library.librarian
-        print(f"\n--- Librarian for {library.name} Library ---")
+        # Find the librarian whose library field matches the given library name
+        librarian = Librarian.objects.get(library__name=library_name)
+        
+        print(f"\n--- Librarian for {librarian.library.name} Library ---")
         print(f"Name: {librarian.name}")
-    except Library.DoesNotExist:
-        print(f"\nLibrary '{library_name}' not found.")
-    except Librarian.DoesNotExist: # Use Librarian.DoesNotExist here as it's a OneToOne
+    except Librarian.DoesNotExist:
         print(f"\nLibrary '{library_name}' has no assigned librarian.")
 
 
