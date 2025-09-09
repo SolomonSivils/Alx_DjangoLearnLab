@@ -11,7 +11,7 @@ def get_books_by_author(author_name):
  
     try:
         author = Author.objects.get(name=author_name)
-        books = author.book_set.all() 
+        books = Book.objects.filter(author=author) 
         print(f"\n--- Books by {author.name} ---")
         if not books:
             print("No books found for this author.")
