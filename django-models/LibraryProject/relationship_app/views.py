@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 
-from .forms import UserRegistrationForm
+# from .forms import UserRegistrationForm
 
 # Function-based View to list all books
 def list_books(request):
@@ -33,14 +33,14 @@ def register_view(request):
     If the request is a GET, it displays the registration form.
     """
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             # Log the user in after successful registration
             login(request, user)
             return redirect('login') # Redirect to the login page
     else:
-        form = UserRegistrationForm()
+        form = UserCreationForm()
     
     return render(request, 'relationship_app/register.html', {'form': form})
 
