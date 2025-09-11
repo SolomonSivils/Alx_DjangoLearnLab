@@ -122,3 +122,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# These settings are used by Django's built-in authentication views
+# to determine the redirect URLs after login and logout.
+
+# The URL to redirect to after a user logs in.
+# This should point to a view that requires authentication.
+LOGIN_REDIRECT_URL = '/'
+
+# The URL to redirect to after a user logs out.
+# This will usually be the login page.
+LOGOUT_REDIRECT_URL = 'login'
+
+# The URL of the login page. This is used by the @login_required decorator.
+LOGIN_URL = 'login'
