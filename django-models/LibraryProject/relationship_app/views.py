@@ -8,6 +8,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import permission_required
 
 # from .forms import UserRegistrationForm
 
@@ -59,3 +61,47 @@ class UserLogoutView(LogoutView):
     It uses the specified template and redirects to the 'login' page on logout.
     """
     next_page = reverse_lazy('login')
+
+# Helper functions for the @user_passes_test decorator
+def is_admin(user):
+    """Checks if a user has the 'Admin' role."""
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
+
+def is_librarian(user):
+    """Checks if a user has the 'Librarian' role."""
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+
+def is_member(user):
+    """Checks if a user has the 'Member' role."""
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+
+# Views with access restricted by user role.
+@user_passes_test(is_admin)
+def admin_view(request):
+    """View accessible only to Admin users."""
+    return render(request, 'relationship_app/admin_view.html')
+
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    """View accessible only to Librarian users."""
+    return render(request, 'relationship_app/librarian_view.html')
+
+@user_passes_test(is_member)
+def member_view(request):
+    """View accessible only to Member users."""
+    return render(request, 'relationship_app/member_view.html')
+
+@permission_required('relationship_app.can_add_book')
+def add_book_view(request):
+    # ... add your logic for adding a book
+    return render(request, 'relationship_app/add_book.html')
+
+@permission_required('relationship_app.can_change_book')
+def edit_book_view(request, book_id):
+    # ... add your logic for editing a book
+    return render(request, 'relationship_app/edit_book.html')
+
+@permission_required('relationship_app.can_delete_book')
+def delete_book_view(request, book_id):
+    # ... add your logic for deleting a book
+    return redirect('books_list')
