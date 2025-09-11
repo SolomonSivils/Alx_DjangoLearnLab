@@ -13,11 +13,11 @@ urlpatterns = [
     # URL pattern for user registration, linking to our custom view
     path('register/', views.register_view, name='register'),
     
-    # URL pattern for user login, using Django's built-in LoginView
-    path('login/', views.UserLoginView.as_view(), name='login'),
+    # URL pattern for user login using Django's built-in LoginView
+    path('login/', auth_views.LoginView.as_view(template_name='relationship_app/login.html'), name='login'),
 
-    # URL pattern for user logout, using Django's built-in LogoutView
-    path('logout/', views.UserLogoutView.as_view(), name='logout'),
+    # URL pattern for user logout using Django's built-in LogoutView
+    path('logout/', auth_views.LogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'),
 ]
 
 
