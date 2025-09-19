@@ -171,6 +171,10 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 # This prevents the initial HTTP request even before a redirect
 SECURE_HSTS_PRELOAD = True
 
+# This setting tells Django that it's running behind a reverse proxy
+# and to trust the X-Forwarded-Proto header for determining if a request is secure (HTTPS)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'",)
