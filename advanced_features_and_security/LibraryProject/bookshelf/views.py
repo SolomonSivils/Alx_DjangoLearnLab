@@ -50,3 +50,12 @@ def book_list(request):
     books = Book.objects.all()
     context = {'books': books}
     return render(request, 'bookshelf/book_list.html', context)
+
+def search_books(request):
+    query = request.GET.get('q')
+    if query:
+        # The ORM handles query sanitization
+        books = Book.objects.filter(title__icontains=query)
+    else:
+        books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
