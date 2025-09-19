@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Article
 from .forms import ArticleForm
-
+from .forms import ExampleForm # Import the new form
 @permission_required('blog.can_view', raise_exception=True)
 def article_list(request):
     articles = Article.objects.all()
@@ -59,3 +59,20 @@ def search_books(request):
     else:
         books = Book.objects.all()
     return render(request, 'bookshelf/book_list.html', {'books': books})
+
+def form_example(request):
+    if request.method == 'POST':
+        # Create a form instance and populate it with data from the request
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the data in form.cleaned_data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            # You can now save this data or perform other actions
+            return render(request, 'bookshelf/form_success.html', {'name': name})
+    else:
+        # Create an empty form instance for a new request
+        form = ExampleForm()
+    
+    return render(request, 'bookshelf/form_example.html', {'form': form})
