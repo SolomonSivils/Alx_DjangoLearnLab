@@ -36,6 +36,16 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
+    class Meta:
+        permissions = [
+            ('can_view'),
+            ('can_create'),
+            ('can_edit'),
+            ('can_delete'),
+        ]
+    def __str__(self):
+        return self.title
 
     def create_superuser(self, username, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -82,7 +92,6 @@ class Article(models.Model):
             ('can_edit', 'Can edit article'),
             ('can_delete', 'Can delete article'),
         ]
-
     def __str__(self):
         return self.title
     
