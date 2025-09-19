@@ -3,7 +3,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
 from django.db import models
-
+from django.db import models
+from django.conf import settings
 # Create your models here.
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -49,4 +50,20 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    
+    class Meta:
+        permissions = [
+            ("can_view", "Can view all posts"),
+            ("can_create", "Can create a new post"),
+            ("can_edit", "Can edit a post"),
+            ("can_delete", "Can delete a post"),
+        ]
+
+    def __str__(self):
+        return self.title
     
