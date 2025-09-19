@@ -5,6 +5,8 @@ from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from django.db import models
 from django.conf import settings
+from django.db import models
+from django.contrib.auth.models import User
 # Create your models here.
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -15,9 +17,14 @@ class Book(models.Model):
         return f"{self.title} by {self.author} ({self.publication_year})"
     
 class CustomUser(AbstractUser):
+    # Your custom fields
     date_of_birth = models.DateField(null=True, blank=True)
     profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
-
+    
+    # REQUIRED_FIELDS must be a list of field names
+    # Add any custom fields you want to be required here
+    REQUIRED_FIELDS = ['date_of_birth'] 
+    
     def __str__(self):
         return self.username
     
@@ -42,14 +49,6 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(username, password, **extra_fields)
 
-class CustomUser(AbstractUser):
-    date_of_birth = models.DateField(null=True, blank=True)
-    profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
-    
-    objects = CustomUserManager()
-
-    def __str__(self):
-        return self.username
     
 class Post(models.Model):
     title = models.CharField(max_length=200)
@@ -62,6 +61,26 @@ class Post(models.Model):
             ("can_create", "Can create a new post"),
             ("can_edit", "Can edit a post"),
             ("can_delete", "Can delete a post"),
+        ]
+
+    def __str__(self):
+        return self.title
+    
+# blog/models.py
+
+
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    class Meta:
+        permissions = [
+            ('can_view', 'Can view article'),
+            ('can_create', 'Can create article'),
+            ('can_edit', 'Can edit article'),
+            ('can_delete', 'Can delete article'),
         ]
 
     def __str__(self):

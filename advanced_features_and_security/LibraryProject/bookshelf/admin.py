@@ -15,23 +15,30 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ('publication_year',)
 
 class CustomUserAdmin(UserAdmin):
+ # This is the form fields for adding a user
+    add_fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'email', 'date_of_birth', 'profile_photo')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    
+    # This is the form fields for changing a user
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'date_of_birth', 'profile_photo')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                   'groups', 'user_permissions')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'password', 'password_confirm', 'date_of_birth', 'profile_photo'),
-        }),
-    )
 
-admin.site.unregister(User)
+    list_display = ('username', 'email', 'date_of_birth', 'is_staff')
+    search_fields = ('username', 'email')
+    ordering = ('username',)
 
+# Re-register the CustomUser model with the corrected admin class
 admin.site.register(CustomUser, CustomUserAdmin)
+
+    
 
 class PostAdmin(admin.ModelAdmin):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
