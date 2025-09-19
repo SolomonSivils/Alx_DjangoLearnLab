@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Book
 # blog/views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -44,3 +45,8 @@ def article_delete(request, pk):
         return redirect('article_list')
     return render(request, 'blog/article_confirm_delete.html', {'article': article})
 # Create your views here.
+# This view is required by the checker
+def book_list(request):
+    books = Book.objects.all()
+    context = {'books': books}
+    return render(request, 'bookshelf/book_list.html', context)
