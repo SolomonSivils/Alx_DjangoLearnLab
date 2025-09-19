@@ -159,6 +159,18 @@ SESSION_COOKIE_SECURE = True
 # Optional but recommended
 SECURE_SSL_REDIRECT = True
 
+# HSTS settings
+# HSTS tells browsers to only access your site via HTTPS for a given time
+# 31536000 seconds is equivalent to one year
+SECURE_HSTS_SECONDS = 31536000
+
+# This ensures HSTS is applied to all subdomains as well
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# This allows browsers to preload your domain into their HSTS list
+# This prevents the initial HTTP request even before a redirect
+SECURE_HSTS_PRELOAD = True
+
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'",)
