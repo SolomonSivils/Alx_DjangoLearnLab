@@ -1,8 +1,8 @@
-# api/urls.py
 
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import BookList
 
-# This will be where we add our API paths later
 urlpatterns = [
-
+    path('books/', BookList.as_view(), name='book-list'),
 ]

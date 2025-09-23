@@ -21,6 +21,7 @@ urlpatterns = [
     
     # This line tells Django to look for URLs in the 'api' app
     # Any URL starting with 'api/' will be handled by the api app
+    path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
 ]
 
