@@ -56,7 +56,7 @@ ROOT_URLCONF = 'api_project.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.IsAuthenticated',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
