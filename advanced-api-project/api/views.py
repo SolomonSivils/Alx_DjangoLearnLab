@@ -5,41 +5,57 @@ generic views and mixins.
 """
 from rest_framework import generics
 from rest_framework import permissions
-from .serializers import BookSerializer
-from .models import Book
+from .serializers import BookSerializer, AuthorSerializer
+from .models import Book, Author
 
-# Generic Views for the Book model
+# Individual Generic Views for the Book model
 
-class BookListView(generics.ListCreateAPIView):
+class BookListView(generics.ListAPIView):
     """
-    A view for listing all books and creating a new book.
-
-    This view combines the functionality of generics.ListAPIView and
-    generics.CreateAPIView using the ListCreateAPIView class.
-    It lists all available Book instances and allows for the creation of a new
-    Book instance.
-
-    Permissions: Read-only access is allowed for anyone.
-    To create a new book, the user must be authenticated.
+    A view for listing all books.
+    This view provides a list of all Book instances.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    # Apply permissions: read-only access for anyone, but only authenticated users can create.
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
+class BookDetailView(generics.RetrieveAPIView):
     """
-    A view for retrieving, updating, and deleting a single book instance.
-
-    This view combines the functionality of generics.RetrieveAPIView,
-    generics.UpdateAPIView, and generics.DestroyAPIView. It fetches a single
-    Book instance by its primary key (pk) and allows for its retrieval,
-    modification, or deletion.
-
-    Permissions: Read-only access is allowed for anyone.
-    To update or delete a book, the user must be authenticated.
+    A view for retrieving a single book instance by its ID.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    # Apply permissions: read-only access for anyone, but only authenticated users can update or delete.
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class BookCreateView(generics.CreateAPIView):
+    """
+    A view for creating a new book instance.
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class BookUpdateView(generics.UpdateAPIView):
+    """
+    A view for updating an existing book instance.
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class BookDeleteView(generics.DestroyAPIView):
+    """
+    A view for deleting an existing book instance.
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+# Generic View for the Author model
+class AuthorListCreateView(generics.ListCreateAPIView):
+    """
+    A view for listing all authors and creating a new author.
+    """
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
