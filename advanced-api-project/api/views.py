@@ -5,6 +5,8 @@ generic views and mixins.
 """
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import filters
+from django_filters import rest_framework
 from .serializers import BookSerializer, AuthorSerializer
 from .models import Book, Author
 
@@ -14,10 +16,23 @@ class BookListView(generics.ListAPIView):
     """
     A view for listing all books.
     This view provides a list of all Book instances.
+    It supports filtering, searching, and ordering.
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    # Define the filter backends to use
+    filter_backends = [rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    
+    # Fields to allow filtering on
+    filterset_fields = ['title', 'author', 'publication_year']
+    
+    # Fields to allow searching on (case-insensitive)
+    search_fields = ['title', 'author__name']
+    
+    # Fields to allow ordering on
+    ordering_fields = ['title', 'publication_year']
 
 class BookDetailView(generics.RetrieveAPIView):
     """
