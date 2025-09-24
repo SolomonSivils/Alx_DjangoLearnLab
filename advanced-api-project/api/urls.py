@@ -1,16 +1,16 @@
 """
-This module defines the URL patterns for the 'api' app.
+This module defines the URL patterns for the API application.
 """
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import AuthorViewSet, BookViewSet
+from django.urls import path
+from .views import BookListView, BookDetailView
 
-# Create a router and register our viewsets with it.
-router = DefaultRouter()
-router.register(r'authors', AuthorViewSet, basename='author')
-router.register(r'books', BookViewSet, basename='book')
-
-# The API URLs are now determined automatically by the router.
+# Define URL patterns for the API endpoints
 urlpatterns = [
-    path('', include(router.urls)),
+    # Path for listing all books and creating a new book.
+    # The .as_view() method is used to convert the class-based view into a callable function.
+    path('books/', BookListView.as_view(), name='book-list-create'),
+
+    # Path for retrieving, updating, or deleting a single book by its primary key (pk).
+    # The <int:pk> part is a dynamic URL parameter that captures the book's ID.
+    path('books/<int:pk>/', BookDetailView.as_view(), name='book-detail'),
 ]
