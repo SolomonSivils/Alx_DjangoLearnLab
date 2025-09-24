@@ -4,7 +4,7 @@ This module defines the views for the API using Django REST Framework's
 generic views and mixins.
 """
 from rest_framework import generics
-from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .serializers import BookSerializer, AuthorSerializer
 from .models import Book, Author
 
@@ -17,7 +17,7 @@ class BookListView(generics.ListAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class BookDetailView(generics.RetrieveAPIView):
     """
@@ -25,7 +25,7 @@ class BookDetailView(generics.RetrieveAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class BookCreateView(generics.CreateAPIView):
     """
@@ -33,7 +33,7 @@ class BookCreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 class BookUpdateView(generics.UpdateAPIView):
     """
@@ -41,7 +41,7 @@ class BookUpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 class BookDeleteView(generics.DestroyAPIView):
     """
@@ -49,7 +49,7 @@ class BookDeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 # Generic View for the Author model
 class AuthorListCreateView(generics.ListCreateAPIView):
@@ -58,4 +58,4 @@ class AuthorListCreateView(generics.ListCreateAPIView):
     """
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
