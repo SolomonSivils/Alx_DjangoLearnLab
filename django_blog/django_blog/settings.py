@@ -126,3 +126,18 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ... (near the bottom of the file)
+
+# Set the URL to redirect to after a user logs in
+LOGIN_REDIRECT_URL = 'profile' # or '/' for the home page
+
+# Set the URL to redirect to after a user logs out
+LOGOUT_REDIRECT_URL = '/' # Redirect to the site root
+
+# Ensure the messages framework is enabled (it should be by default)
+INSTALLED_APPS = [
+    # ...
+    'django.contrib.messages', 
+    # ...
+]
