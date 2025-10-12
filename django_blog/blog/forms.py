@@ -3,7 +3,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Post
+from .models import Post,  Comment # Import Comment model
 # We will keep the CustomUserCreationForm from the previous step
 
 
@@ -30,3 +30,16 @@ class PostForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
         }
+
+class CommentForm(forms.ModelForm):
+    # Customize the widget to make the textarea friendlier
+    content = forms.CharField(widget=forms.Textarea(attrs={
+        'rows': '3', 
+        'placeholder': 'Join the discussion...'
+    }), label='')
+    
+    class Meta:
+        model = Comment
+        # Only expose the content field to the user. 
+        # 'post', 'author', and 'created_at' will be set in the view.
+        fields = ['content'] 

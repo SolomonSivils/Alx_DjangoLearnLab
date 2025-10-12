@@ -2,14 +2,23 @@
 {% block title %}{{ post.title }}{% endblock title %}
 
 {% block content %}
+    
+    <!-- Display Messages (like comment success/failure) -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     <article class="full-post">
         <h2>{{ post.title }}</h2>
         <p class="meta">By {{ post.author }} on {{ post.published_date|date:"F d, Y" }}</p>
         
+        <!-- Post Action Buttons -->
         {% if user.is_authenticated and user == post.author %}
             <p class="actions">
-                <a href="{% url 'post-update' pk=post.pk %}">Edit</a> | 
-                <a href="{% url 'post-delete' pk=post.pk %}">Delete</a>
+                <a href="{% url 'post-update' pk=post.pk %}">Edit Post</a> | 
+                <a href="{% url 'post-delete' pk=post.pk %}">Delete Post</a>
             </p>
         {% endif %}
         
@@ -17,4 +26,58 @@
             {{ post.content|linebreaksbr }} 
         </div>
     </article>
+
+    <hr>
+    
+    <!-- Comment Section -->
+    <section id="comments">
+        <h3>Comments ({{ post.comments.count }})</h3>
+        
+        <!-- -------------------- 
+             Comment FORM (for authenticated users) 
+             -------------------- -->
+        {% if user.is_authenticated %}
+            <h4>Leave a Comment</h4>
+            <form method="POST" action="{% url 'add-comment' pk=post.pk %}">
+                {% csrf_token %}
+                {{ form.media }}
+                {{ form.content }} <!-- Render only the content field from CommentForm -->
+                <button type="submit" class="btn-comment">Post Comment</button>
+            </form>
+            <hr>
+        {% else %}
+            <p>Please <a href="{% url 'login' %}?next={{ request.path }}">log in</a> to leave a comment.</p>
+            <hr>
+        {% endif %}
+
+
+        <!-- -------------------- 
+             Display Existing Comments (Practice for loops!)
+             -------------------- -->
+        {% for comment in post.comments.all %}
+            <div class="comment-item">
+                <p class="comment-meta">
+                    <strong>{{ comment.author.username }}</strong> 
+                    - {{ comment.created_at|timesince }} ago
+                </p>
+                <div class="comment-content">
+                    {{ comment.content|linebreaksbr }}
+                </div>
+
+                <!-- Delete Button (Only visible to the comment author) -->
+                {% if user.is_authenticated and user == comment.author %}
+                    <form method="POST" action="{% url 'delete-comment' pk=comment.pk %}" style="display:inline;">
+                        {% csrf_token %}
+                        <!-- Use a hidden input for better confirmation flow in a real app, 
+                             but here a simple POST button is used for the check -->
+                        <button type="submit" class="btn-delete">Delete</button>
+                    </form>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p>Be the first to comment!</p>
+        {% endfor %}
+
+    </section>
+
 {% endblock content %}

@@ -1,20 +1,32 @@
-from django.db import models
-from django.contrib.auth.models import User # Import the built-in User model
+# blog/models.py
 
-class Post(models.Model):
-    # Field 1: Title of the blog post
-    title = models.CharField(max_length=200)
+from django.db import models
+from django.contrib.auth.models import User # Ensure this is imported
+# from .models import Post (already defined above)
+
+
+# ... (Post model definition is here) ...
+
+class Comment(models.Model):
+    # Foreign Key to the Post it belongs to (many comments to one post)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='comments')
     
-    # Field 2: Content/Body of the blog post
+    # Foreign Key to the User who wrote the comment
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    # The actual content of the comment
     content = models.TextField()
     
-    # Field 3: Date/Time the post was published (set automatically on creation)
-    published_date = models.DateTimeField(auto_now_add=True)
+    # Timestamp for creation (set automatically on object creation)
+    created_at = models.DateTimeField(auto_now_add=True)
     
-    # Field 4: Author of the post (Foreign Key to Django's User model)
-    # on_delete=models.CASCADE means if the User is deleted, their posts are also deleted.
-    author = models.ForeignKey(User, on_delete=models.CASCADE) 
-    
-    # Optional: A human-readable representation of the object
+    # Timestamp for last update (set automatically every time the object is saved)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # Order comments by the oldest first (or newest, depending on preference)
+        ordering = ['created_at'] 
+
     def __str__(self):
-        return self.title
+        # Display the comment's author and content snippet in the admin
+        return f'{self.author.username}: {self.content[:30]}...'
