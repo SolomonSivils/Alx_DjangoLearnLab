@@ -173,3 +173,78 @@ class PostDetailView(DetailView):
         # Pass an instance of the CommentForm to the template
         context['form'] = CommentForm() 
         return context
+    
+# blog/views.py (Add to existing CBV imports)
+from django.views.generic import (
+    # ... existing imports
+    CreateView,
+    UpdateView,
+    DeleteView
+)
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect # Needed for get_success_url
+
+from .models import Post, Comment # Import Comment model
+from .forms import PostForm, CommentForm # Import CommentForm
+
+# ... (Existing PostListView, PostDetailView, etc. remain unchanged) ...
+
+# -----------------------------------------------------------------
+# CREATE: CommentCreateView (Requires login)
+# -----------------------------------------------------------------
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    # We don't need a specific template for this, as it will be handled by post_detail.html
+    # We set this to None or skip template_name entirely.
+    
+    # Override form_valid to link the comment to the user and the post
+    def form_valid(self, form):
+        # 1. Get the Post object from the URL (pk is passed as post_pk)
+        post = get_object_or_404(Post, pk=self.kwargs.get('post_pk'))
+        
+        # 2. Set the Foreign Keys
+        form.instance.post = post
+        form.instance.author = self.request.user
+        
+        # 3. Save the comment and redirect
+        return super().form_valid(form)
+
+    # Required to redirect to the post detail page after successful comment creation
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.kwargs.get('post_pk')})
+
+# -----------------------------------------------------------------
+# UPDATE: CommentUpdateView (Requires login AND author check)
+# NOTE: This will require a new template (comment_form.html)
+# -----------------------------------------------------------------
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def test_func(self):
+        # Only the author can update the comment
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    # Required to redirect to the post detail page after successful update
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+# -----------------------------------------------------------------
+# DELETE: CommentDeleteView (Requires login AND author check)
+# -----------------------------------------------------------------
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
+    
+    def test_func(self):
+        # Only the author can delete the comment
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    # Required to redirect to the post detail page after successful deletion
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
