@@ -81,3 +81,26 @@
     </section>
 
 {% endblock content %}
+
+{% extends "blog/base.html" %}
+{% block title %}{{ post.title }}{% endblock title %}
+
+{% block content %}
+    
+    <!-- ... (Messages and Article content) ... -->
+    
+    <article class="full-post">
+        <h2>{{ post.title }}</h2>
+        <p class="meta">By {{ post.author }} on {{ post.published_date|date:"F d, Y" }}</p>
+        
+        <!-- Display Tags on Detail Page -->
+        <p class="post-tags">
+            <strong>Tags:</strong> 
+            {% for tag in post.tags.all %}
+                <a href="{% url 'posts-by-tag' tag_slug=tag.slug %}" class="tag-link">#{{ tag.name }}</a>
+            {% endfor %}
+        </p>
+
+        <!-- ... (Actions, Content, and Comment Section) ... -->
+        
+{% endblock content %}
