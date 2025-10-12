@@ -2,6 +2,10 @@
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django import forms
+from .models import Post
+# We will keep the CustomUserCreationForm from the previous step
+
 
 class CustomUserCreationForm(UserCreationForm):
     # This form extends the default UserCreationForm
@@ -16,3 +20,13 @@ class CustomUserCreationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         # Make the email field required
         self.fields['email'].required = True
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        # The author field is set automatically in the PostCreateView's form_valid method, 
+        # so we only include title and content here.
+        fields = ['title', 'content'] 
+        widgets = {
+            'content': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
+        }
