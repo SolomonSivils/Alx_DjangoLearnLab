@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post
 from .forms import PostForm  # We'll define this in Step 2
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
 # Note: We keep the old views for context, but the new CBVs handle post logic
 
 # -----------------------------------------------------------------
