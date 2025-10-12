@@ -43,3 +43,15 @@ class CommentForm(forms.ModelForm):
         # Only expose the content field to the user. 
         # 'post', 'author', and 'created_at' will be set in the view.
         fields = ['content'] 
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        # Add 'tags' field here. django-taggit automatically renders the correct widget.
+        fields = ['title', 'content', 'tags'] 
+        widgets = {
+            'content': forms.Textarea(attrs={'cols': 80, 'rows': 20}),
+            'tags': forms.TextInput(attrs={'placeholder': 'Enter tags separated by commas, e.g., python, django, tutorial'}),
+        }
+
+# ... (Existing CommentForm remains the same) ...

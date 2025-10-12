@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User # Ensure this is imported
+from taggit.managers import TaggableManager # Import TaggableManager
 # from .models import Post (already defined above)
 
 
@@ -30,3 +31,13 @@ class Comment(models.Model):
     def __str__(self):
         # Display the comment's author and content snippet in the admin
         return f'{self.author.username}: {self.content[:30]}...'
+    
+class Post(models.Model):
+    # ... (Existing fields: title, content, published_date, author) ...
+    
+    # NEW FIELD: Tags field using TaggableManager
+    tags = TaggableManager() # Adds a tags field to the Post model
+
+    # ... (Existing __str__ and get_absolute_url methods) ...
+    
+# ... (Comment model remains the same) ...

@@ -248,3 +248,65 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     # Required to redirect to the post detail page after successful deletion
     def get_success_url(self):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+    
+
+# blog/views.py
+
+from django.views.generic import (
+    ListView,
+    # ... other CBV imports ...
+)
+from django.db.models import Q # Import Q object for search (Crucial for this task!)
+
+# ... (Existing Post/Comment imports) ...
+
+# ... (Existing PostListView, PostDetailView, etc. remain unchanged) ...
+
+# -----------------------------------------------------------------
+# READ: View Posts by Tag (New Feature)
+# -----------------------------------------------------------------
+class TaggedPostListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+    ordering = ['-published_date']
+
+    def get_queryset(self):
+        # Filter posts where the tags contain the tag_slug provided in the URL
+        return Post.objects.filter(tags__slug=self.kwargs.get('tag_slug')).order_by('-published_date')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the tag name to the context for the template header
+        context['tag_name'] = self.kwargs.get('tag_slug').replace('-', ' ').title()
+        return context
+
+# -----------------------------------------------------------------
+# READ: Search Posts (New Feature)
+# -----------------------------------------------------------------
+class SearchPostListView(ListView):
+    model = Post
+    template_name = 'blog/search_results.html'
+    context_object_name = 'posts'
+    
+    def get_queryset(self):
+        query = self.request.GET.get('q') # Get the search query from the URL parameter 'q'
+        
+        if query:
+            # Use Q objects to perform a complex OR search across multiple fields
+            return Post.objects.filter(
+                Q(title__icontains=query) | # Match if title contains query (case-insensitive)
+                Q(content__icontains=query) | # Match if content contains query (case-insensitive)
+                Q(tags__name__icontains=query) # Match if any tag name contains query
+            ).distinct().order_by('-published_date') # distinct() prevents duplicates from the tag match
+        
+        # If no query is provided, return an empty set
+        return Post.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Pass the original query back to the template
+        context['query'] = self.request.GET.get('q')
+        return context
+
+# ... (Existing CommentCreateView, etc. remain unchanged) ...

@@ -58,3 +58,26 @@ urlpatterns = [
     
     # ... (Your existing auth paths) ...
 ]
+
+# blog/urls.py
+
+from django.urls import path
+from .views import (
+    # ... existing Post/Comment CBV imports ...
+    TaggedPostListView, # Import new view
+    SearchPostListView  # Import new view
+)
+
+urlpatterns = [
+    # ... (Existing Post CRUD paths: '', 'post/<int:pk>/', etc.) ...
+    
+    # NEW FEATURE URLS
+    
+    # 1. View posts by tag (uses a slug to ensure clean URLs)
+    path('tags/<slug:tag_slug>/', TaggedPostListView.as_view(), name='posts-by-tag'),
+    
+    # 2. Search results page
+    path('search/', SearchPostListView.as_view(), name='search-results'),
+    
+    # ... (Existing Comment/Auth paths) ...
+]
