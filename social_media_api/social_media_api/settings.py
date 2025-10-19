@@ -173,7 +173,8 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
+if 'PORT' not in DATABASES['default']:
+    DATABASES['default']['PORT'] = os.environ.get('DB_PORT', '')
 # 3. Static Files (Crucial for deployment with Whitenoise)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Where collectstatic will put files
