@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'accounts',
     'posts',
     'notifications',
-    
+
 ]
 
 # ... other settings
@@ -60,6 +60,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # WhiteNoise must be listed directly after the SecurityMiddleware
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # <--- ADD THIS LINE
+    # ... rest of middleware ...
 ]
 
 ROOT_URLCONF = 'social_media_api.urls'
@@ -143,3 +147,42 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10 # Set the default number of items per page
 }
+
+import os
+import dj_database_url # Import for dynamic database configuration
+
+# 1. SECURITY & HOSTS
+DEBUG = os.environ.get('DEBUG', 'False') == 'True' # Read DEBUG from environment
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+
+# 2. Database Configuration
+# Use dj-database-url to parse the database URL from environment variables (e.g., DATABASE_URL)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+    }
+else:
+    # Fallback to local SQLite during initial setup if variable isn't set
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# 3. Static Files (Crucial for deployment with Whitenoise)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Where collectstatic will put files
+
+# 4. Security Headers (Recommended for production)
+if not DEBUG:
+    # Ensure secure headers are set when DEBUG is False
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # Optional: Force HTTPS redirection (Heroku/AWS often handles this, but good practice)
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
