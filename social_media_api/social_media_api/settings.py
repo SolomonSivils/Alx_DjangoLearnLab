@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken', # For Token Authentication
     # Local apps
     'accounts',
+    'posts',
 ]
 
 # ... other settings
@@ -130,3 +131,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# social_media_api/settings.py
+
+# ... (Existing settings)
+
+REST_FRAMEWORK = {
+    # ... (Existing DEFAULT_AUTHENTICATION_CLASSES, etc.)
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10 # Set the default number of items per page
+}

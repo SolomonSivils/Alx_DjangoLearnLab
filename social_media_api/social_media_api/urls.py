@@ -24,4 +24,9 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),
     # You could also add a root path for API
     # path('api/', include('accounts.urls')),
+    # Link the accounts app for auth routes
+    path('api/auth/', include('accounts.urls')), 
+    
+    # 🔗 ADD THIS LINE to include post and comment routes
+    path('api/', include('posts.urls')),
 ]
