@@ -50,7 +50,7 @@ class FeedView(generics.ListAPIView):
 
         # 2. Filter all Posts to include only those whose author is in the followed_users list.
         # The 'author__in' lookup is used here.
-        queryset =Post.objects.filter(author__in=followed_users).order_by('-created_at')
+        queryset =Post.objects.filter(author__in=following_users).order_by('-created_at')
 
         # 3. Order the posts by created_at, showing the newest first.
         return queryset
