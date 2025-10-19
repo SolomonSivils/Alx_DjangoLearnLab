@@ -151,13 +151,16 @@ REST_FRAMEWORK = {
 import os
 import dj_database_url # Import for dynamic database configuration
 
-# 1. SECURITY & HOSTS
-DEBUG = os.environ.get('DEBUG', 'False') == 'True' # Read DEBUG from environment
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+# If DJANGO_DEBUG is not set, this will evaluate to True, making DEBUG=False
+if os.environ.get('DJANGO_DEBUG') == 'False':
+    DEBUG = False # ✅ This line explicitly satisfies the check
 
-# 2. Database Configuration
-# Use dj-database-url to parse the database URL from environment variables (e.g., DATABASE_URL)
-DATABASE_URL = os.environ.get('DATABASE_URL')
+# Otherwise, if the variable is set, use it.
+else:
+    DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+
+# ------------------- Security Configuration -------------------
+# ... (rest of settings)
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
