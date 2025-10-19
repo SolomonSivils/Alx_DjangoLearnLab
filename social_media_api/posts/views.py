@@ -8,6 +8,7 @@ from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly # Import your custom permission
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters # 💡 Import DRF filters
+from rest_framework import generics # Import ListAPIView's parent
 
 class PostViewSet(viewsets.ModelViewSet):
     # Retrieve all posts
@@ -36,3 +37,23 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # NOTE: The post field must be passed in the request data
         serializer.save(author=self.request.user)
+
+class FeedView(generics.ListAPIView):
+    # This view only allows listing (GET) posts.
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # 1. Get the list of users that the current request user is following.
+        # This returns a queryset of CustomUser objects.
+        followed_users = self.request.user.following.all()
+
+        # 2. Filter all Posts to include only those whose author is in the followed_users list.
+        # The 'author__in' lookup is used here.
+        queryset = Post.objects.filter(author__in=followed_users)
+
+        # 3. Order the posts by created_at, showing the newest first.
+        return queryset.order_by('-created_at')
+
+# NOTE: Since you implemented pagination in the last task, 
+# this view will automatically be paginated!
