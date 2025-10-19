@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 # 1. Serializer for User Registration
 class UserRegistrationSerializer(serializers.ModelSerializer):
     # The 'password' field is already correctly defined here:
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField()
 
     class Meta:
         # Use get_user_model() instead of hardcoding CustomUser
@@ -22,6 +22,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             bio=validated_data.get('bio', ''),
             password=validated_data['password']
+            token, created = Token.objects.get_or_create(user=user)
         )
         return user
 
