@@ -99,3 +99,16 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
 # ... (Existing views like RegisterView, etc.)
 
+request.user.following.add(user_to_follow)
+
+# 🔗 ADD NOTIFICATION HOOK: Notify the followed user
+create_notification(
+    recipient=user_to_follow,
+    actor=request.user,
+    verb="started following you"
+)
+
+return Response(
+    {"status": f"You are now following {user_to_follow.username}"}, 
+    status=status.HTTP_200_OK
+)

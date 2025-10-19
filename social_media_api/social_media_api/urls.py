@@ -29,4 +29,5 @@ urlpatterns = [
     
     # 🔗 ADD THIS LINE to include post and comment routes
     path('api/', include('posts.urls')),
+    path('api/notifications/', include('notifications.urls')),
 ]
